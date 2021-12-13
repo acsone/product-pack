@@ -10,3 +10,4 @@
   * Pedro M. Baeza
   * Jairo Llopis
   * Sergio Teruel
+* Denis Roussel <denis.roussel@acsone.eu>

@@ -91,6 +91,7 @@ Credits
 Authors
 ~~~~~~~
 
+* ACSONE SA/NV
 * NaN·tic
 * ADHOC SA
 * Tecnativa
@@ -110,6 +111,7 @@ Contributors
   * Pedro M. Baeza
   * Jairo Llopis
   * Sergio Teruel
+* Denis Roussel <denis.roussel@acsone.eu>
 
 Maintainers
 ~~~~~~~~~~~
