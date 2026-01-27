@@ -1,8 +1,14 @@
 # Copyright 2019 Tecnativa - Ernesto Tejeda
 # Copyright 2025 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+import pytest
+from odoo.exceptions import UserError
 
 from .common import TestSaleProductPackBase
+
+from odoo.addons.sale_product_pack.models.sale_order_line import (
+    IMMUTABLE_CHILD_FIELDS,
+)
 
 
 class TestSaleProductPack(TestSaleProductPackBase):
@@ -137,3 +143,14 @@ class TestSaleProductPack(TestSaleProductPackBase):
         self.assertEqual(self.sale_order.order_line[2].product_id, self.component1)
         self.assertEqual(self.sale_order.order_line[3].product_id, self.component2)
         self.assertEqual(self.sale_order.order_line[4].product_id, product)
+
+    @pytest.mark.parametrize("field", IMMUTABLE_CHILD_FIELDS)
+    def test_message_assertions(self, field):
+        pack_line = self._add_so_line()
+        component_line = self.sale_order.order_line.filtered(
+            lambda l: l.pack_parent_line_id == pack_line
+        )[0]
+        with self.assertRaises(UserError):
+            # Check is done before final write, so the None value here is fine
+            component_line.write({field: None})
+
