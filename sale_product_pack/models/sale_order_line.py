@@ -4,6 +4,16 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.fields import first
 
+IMMUTABLE_CHILD_FIELDS = [
+    "product_id",
+    "product_uom_qty",
+    "product_uom",
+    "price_unit",
+    "discount",
+    "name",
+    "tax_id",
+]
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -100,15 +110,7 @@ class SaleOrderLine(models.Model):
                 record.expand_pack_line(write=True)
         return res
 
-    @api.onchange(
-        "product_id",
-        "product_uom_qty",
-        "product_uom",
-        "price_unit",
-        "discount",
-        "name",
-        "tax_id",
-    )
+    @api.onchange(*IMMUTABLE_CHILD_FIELDS)
     def check_pack_line_modify(self):
         """Do not let to edit a sale order line if this one belongs to pack"""
         if self._origin.pack_parent_line_id and not self._origin.pack_modifiable:

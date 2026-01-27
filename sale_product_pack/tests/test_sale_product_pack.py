@@ -2,6 +2,12 @@
 # Copyright 2025 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from odoo.exceptions import UserError
+
+from odoo.addons.sale_product_pack.models.sale_order_line import (
+    IMMUTABLE_CHILD_FIELDS,
+)
+
 from .common import TestSaleProductPackBase
 
 
@@ -137,3 +143,15 @@ class TestSaleProductPack(TestSaleProductPackBase):
         self.assertEqual(self.sale_order.order_line[2].product_id, self.component1)
         self.assertEqual(self.sale_order.order_line[3].product_id, self.component2)
         self.assertEqual(self.sale_order.order_line[4].product_id, product)
+
+    def test_message_assertions(self, field):
+        pack_line = self._add_so_line()
+        component_line = self.sale_order.order_line.filtered(
+            lambda line: line.pack_parent_line_id == pack_line
+        )[0]
+        form = component_line.form()
+        for field in IMMUTABLE_CHILD_FIELDS:
+            with self.subTest(field=field):
+                with self.assertRaises(UserError):
+                    form[field] = None
+                    form.save()
