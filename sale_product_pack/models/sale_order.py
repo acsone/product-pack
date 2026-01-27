@@ -1,7 +1,6 @@
 # Copyright 2019 Tecnativa - Ernesto Tejeda
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-from odoo import _, api, models
-from odoo.exceptions import UserError
+from odoo import models
 
 
 class SaleOrder(models.Model):
@@ -13,30 +12,8 @@ class SaleOrder(models.Model):
         pack_copied_lines = sale_copy.order_line.filtered(
             lambda line: line.pack_parent_line_id.order_id == self
         )
-        pack_copied_lines.unlink()
+        pack_copied_lines.with_context(pack_children_force_unlink=True).unlink()
         return sale_copy
-
-    @api.onchange("order_line")
-    def check_pack_line_unlink(self):
-        """At least on embeded tree editable view odoo returns a recordset on
-        _origin.order_line only when lines are unlinked and this is exactly
-        what we need
-        """
-        origin_line_ids = self._origin.order_line.ids
-        line_ids = self.order_line.ids
-        removed_line_ids = list(set(origin_line_ids) - set(line_ids))
-        removed_line = self.env["sale.order.line"].browse(removed_line_ids)
-        if removed_line.filtered(
-            lambda x: x.pack_parent_line_id
-            and not x.pack_parent_line_id.product_id.pack_modifiable
-        ):
-            raise UserError(
-                _(
-                    "You cannot delete this line because is part of a pack in"
-                    " this sale order. In order to delete this line you need to"
-                    " delete the pack itself"
-                )
-            )
 
     def write(self, vals):
         if "order_line" in vals:

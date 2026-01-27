@@ -7,6 +7,7 @@
   - Daniel Reis \<<dreis@opensourceintegrators.com>\>
 - [Acsone](https://www.acsone.eu/):
   - Maxime Franco
+  - Stéphane Mangin \<<stephane.mangin@acsone.eu>\>
 - [ADHOC SA](https://www.adhoc.com.ar):
   - Bruno Zanotti
   - Augusto Weiss
