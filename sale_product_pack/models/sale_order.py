@@ -16,8 +16,16 @@ class SaleOrder(models.Model):
         return sale_copy
 
     def write(self, vals):
+        pack_parent_delete_ids = []
         if "order_line" in vals:
             to_delete_ids = [e[1] for e in vals["order_line"] if e[0] == 2]
+            if to_delete_ids:
+                pack_parent_delete_ids = (
+                    self.env["sale.order.line"]
+                    .browse(to_delete_ids)
+                    .filtered(lambda line: line.pack_child_line_ids)
+                    .ids
+                )
             subpacks_to_delete_ids = (
                 self.env["sale.order.line"]
                 .search(
@@ -33,6 +41,11 @@ class SaleOrder(models.Model):
                         subpacks_to_delete_ids.remove(cmd[1])
                 for to_delete_id in subpacks_to_delete_ids:
                     vals["order_line"].append([2, to_delete_id, False])
+        if pack_parent_delete_ids:
+            return super(
+                SaleOrder,
+                self.with_context(pack_parent_delete_ids=pack_parent_delete_ids),
+            ).write(vals)
         return super().write(vals)
 
     def _get_update_prices_lines(self):
