@@ -114,8 +114,10 @@ class SaleOrderLine(models.Model):
         # Avoid removing of a component line if the parent line is not also being
         # removed and the pack is not modifiable
         forcing_context = self.env.context.get("pack_children_force_unlink", False)
+        pack_parent_delete_ids = self.env.context.get("pack_parent_delete_ids", [])
         if not forcing_context and self.filtered(
             lambda x: x.pack_parent_line_id
+            and x.pack_parent_line_id.id not in pack_parent_delete_ids
             and (
                 x.pack_parent_line_id not in self
                 or x.pack_parent_line_id in x.order_id.order_line
