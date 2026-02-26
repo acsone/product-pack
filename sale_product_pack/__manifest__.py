@@ -21,6 +21,9 @@
         "web.assets_backend": [
             "sale_product_pack/static/src/js/**/*.js",
         ],
+        "web.assets_unit_tests": [
+            "sale_product_pack/static/tests/sale_order_line.esm.test.js",
+        ],
     },
     "installable": True,
 }
