@@ -1,6 +1,7 @@
 # Copyright 2026 ACSONE SA/NV
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from odoo import Command
 from odoo.exceptions import UserError
 
 from .common import TestSaleProductPackBase
@@ -96,3 +97,12 @@ class TestSaleOrder(TestSaleProductPackBase):
         self.assertEqual(self.sale_order.order_line[0].product_id, self.pack)
         self.assertEqual(self.sale_order.order_line[1].product_id, self.component1)
         self.assertEqual(self.sale_order.order_line[2].product_id, self.component2)
+
+    def test_unlink_pack_line_should_unlink_children(self):
+        """Unlinking the parent should remove children too."""
+        pack_line = self._add_so_line()
+        self.assertEqual(len(self.sale_order.order_line), 3)
+
+        self.sale_order.write({"order_line": [Command.delete(pack_line.id)]})
+
+        self.assertEqual(len(self.sale_order.order_line), 0)
