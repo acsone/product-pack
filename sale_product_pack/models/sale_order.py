@@ -7,16 +7,10 @@ from odoo.exceptions import UserError
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    def copy(self, default=None):
-        sale_copy = super().copy(default)
-        for record in self:
-            # we unlink pack lines that should not be copied
-            pack_copied_lines = sale_copy.order_line.filtered(
-                lambda x, order=record: x.pack_parent_line_id.order_id == order
-            )
-            if pack_copied_lines:
-                pack_copied_lines.unlink()
-        return sale_copy
+    def _get_copiable_order_lines(self):
+        self.ensure_one()
+        res = super()._get_copiable_order_lines()
+        return res.filtered(lambda x, order=self: x.pack_parent_line_id.order_id != order)
 
     @api.onchange("order_line")
     def check_pack_line_unlink(self):
