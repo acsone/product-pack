@@ -8,7 +8,7 @@ class ProductPackType(models.Model):
     _name = "product.pack.type"
     _description = "Product Pack Type"
 
-    name = fields.Char()
+    name = fields.Char(required=True, copy=False)
     description = fields.Text()
     color = fields.Integer()
     active = fields.Boolean(default=True)
@@ -20,6 +20,11 @@ class ProductPackType(models.Model):
         help="These are the pack products of this type",
     )
     product_pack_count = fields.Integer(compute="_compute_product_pack_count")
+
+    _name_unique = models.Constraint(
+        "unique (name)",
+        "A product pack type with this name already exists.",
+    )
 
     def _compute_product_pack_count(self):
         for pack_type in self:
@@ -33,9 +38,9 @@ class ProductPackType(models.Model):
 
     def action_product_pack_view(self):
         action = self.env["ir.actions.act_window"]._for_xml_id(
-            "product_pack.action_product_pack"
+            "product.product_template_action"
         )
         if len(self) == 1:
             action["context"] = self._get_default_pack_action_context()
-        action["domain"] = [("pack_type_id", "in", self.ids)]
+        action["domain"] = [("pack_ok", "=", True), ("pack_type_id", "in", self.ids)]
         return action
