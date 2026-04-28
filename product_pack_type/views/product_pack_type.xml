@@ -60,9 +60,9 @@
         <field name="name">product.pack.type.tree (in product_pack_type)</field>
         <field name="model">product.pack.type</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name" />
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -75,7 +75,7 @@
                 <field name="name" />
                 <field name="color" />
                 <templates>
-                    <t t-name="kanban-box">
+                    <t t-name="card">
                         <t
                             t-set="color"
                             t-value="kanban_color(record.color.raw_value)"
@@ -105,7 +105,7 @@
     <record model="ir.actions.act_window" id="product_pack_type_act_window">
         <field name="name">Product Pack Type</field>
         <field name="res_model">product.pack.type</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="domain">[]</field>
         <field name="context">{}</field>
     </record>
