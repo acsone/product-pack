@@ -33,9 +33,9 @@ class ProductPackType(models.Model):
 
     def action_product_pack_view(self):
         action = self.env["ir.actions.act_window"]._for_xml_id(
-            "product_pack.action_product_pack"
+            "product.product_template_action"
         )
         if len(self) == 1:
             action["context"] = self._get_default_pack_action_context()
-        action["domain"] = [("pack_type_id", "in", self.ids)]
+        action["domain"] = [("pack_ok", "=", True), ("pack_type_id", "in", self.ids)]
         return action

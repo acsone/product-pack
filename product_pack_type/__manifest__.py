@@ -5,7 +5,7 @@
     "name": "Product Pack Type",
     "summary": """
         Allows to define a type on product which is a pack""",
-    "version": "14.0.1.0.0",
+    "version": "19.0.1.0.0",
     "license": "AGPL-3",
     "author": "ACSONE SA/NV,Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/product-pack",
@@ -21,4 +21,5 @@
         "demo/product_pack_type.xml",
         "demo/product_product.xml",
     ],
+    "installable": True,
 }
